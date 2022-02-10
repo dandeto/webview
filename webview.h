@@ -75,6 +75,10 @@ WEBVIEW_API void webview_set_title(webview_t w, const char *title);
 WEBVIEW_API void webview_set_size(webview_t w, int width, int height,
                                   int hints);
 
+// Allow file access from javacript via XHR request
+// Can alternatively use RPC bindings, but this allows direct access
+WEBVIEW_API void webview_allow_files(webview_t w);
+
 // Navigates webview to the given URL. URL may be a data URI, i.e.
 // "data:text/text,<html>...</html>". It is often ok not to url-encode it
 // properly, webview will re-encode it for you.
@@ -535,6 +539,11 @@ public:
       // This defines either MIN_SIZE, or MAX_SIZE, but not both:
       gtk_window_set_geometry_hints(GTK_WINDOW(m_window), nullptr, &g, h);
     }
+  }
+
+  void allow_files() {
+    WebKitSettings *settings = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(m_webview));
+    webkit_settings_set_allow_file_access_from_file_urls(settings, true);
   }
 
   void navigate(const std::string url) {
@@ -1352,6 +1361,10 @@ WEBVIEW_API void webview_set_title(webview_t w, const char *title) {
 WEBVIEW_API void webview_set_size(webview_t w, int width, int height,
                                   int hints) {
   static_cast<webview::webview *>(w)->set_size(width, height, hints);
+}
+
+WEBVIEW_API void webview_allow_files(webview_t w) {
+  static_cast<webview::webview *>(w)->allow_files();
 }
 
 WEBVIEW_API void webview_navigate(webview_t w, const char *url) {
